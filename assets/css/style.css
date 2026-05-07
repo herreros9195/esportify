@@ -1,0 +1,92 @@
+/**
+ * Esportify - Charte graphique & Styles personnalisés
+ * Palette : Bleu foncé (#0d6efd), Noir (#212529), Blanc (#ffffff), Gris clair (#f8f9fa)
+ */
+
+:root {
+    --esportify-primary: #0d6efd;
+    --esportify-dark: #212529;
+    --esportify-light: #f8f9fa;
+    --esportify-accent: #6610f2;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--esportify-light);
+}
+
+main {
+    flex: 1;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+}
+
+.card {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.card-title {
+    color: var(--esportify-dark);
+}
+
+.btn-primary {
+    background-color: var(--esportify-primary);
+    border-color: var(--esportify-primary);
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.carousel-item .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.event-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.event-card:hover {
+    transform: translateY(-4px);
+}
+
+footer {
+    margin-top: auto;
+}
+
+.alert {
+    border-radius: 0.5rem;
+}
+
+.table th {
+    background-color: var(--esportify-dark);
+    color: #fff;
+}
+
+.modal-content {
+    border-radius: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+    .carousel-item .container {
+        min-height: 200px;
+    }
+    .display-4 {
+        font-size: 2rem;
+    }
+}

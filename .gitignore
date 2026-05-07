@@ -1,0 +1,23 @@
+# Dépendances Composer
+/vendor/
+composer.lock
+
+# Fichiers d'environnement
+.env
+config/database_local.php
+
+# Sessions et logs
+*.log
+/sessions/
+
+# IDEs
+.vscode/
+.idea/
+
+# Système
+.DS_Store
+Thumbs.db
+
+# Fichiers uploadés (à créer si upload implémenté)
+/assets/uploads/*
+!/assets/uploads/.gitkeep
