@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Tous les événements';
+$pageTitle = 'Tous les événements'; // Feature: Events Management
 require_once __DIR__ . '/../includes/header.php';
 
 $events = getVisibleEvents($pdo);
