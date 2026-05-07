@@ -4,7 +4,7 @@
  * Retourne du JSON pour mise à jour sans rechargement.
  */
 
-require_once __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/functions.php'; // Feature: Async Filters API
 
 header('Content-Type: application/json; charset=utf-8');
 
