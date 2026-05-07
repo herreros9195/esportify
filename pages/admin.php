@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Administration';
+$pageTitle = 'Administration'; // Feature: Admin Dashboard
 require_once __DIR__ . '/../includes/header.php';
 
 if (!isAdmin()) {
