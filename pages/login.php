@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Connexion';
+$pageTitle = 'Connexion'; // Feature: Authentication
 require_once __DIR__ . '/../includes/header.php';
 
 if (isLoggedIn()) {
