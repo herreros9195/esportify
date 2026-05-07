@@ -48,7 +48,7 @@ require_once __DIR__ . '/functions.php';
                         <a class="nav-link" href="index.php?page=profile">Mon espace</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php?page=logout">Déconnexion (<?= e($_SESSION['user_pseudo']) ?>)</a>
+                        <a class="nav-link" href="index.php?page=logout">Déconnexion (<?= e($_SESSION['user_pseudo'] ?? '') ?>)</a>
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
