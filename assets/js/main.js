@@ -107,4 +107,60 @@ document.addEventListener('DOMContentLoaded', function () {
         div.textContent = text;
         return div.innerHTML;
     }
+
+    // Chat asynchrone
+    const chatForm = document.getElementById('chatForm');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatEventId = document.getElementById('chatEventId');
+
+    if (chatForm && chatMessages && chatEventId) {
+        const eventId = chatEventId.value;
+
+        function loadChat() {
+            fetch('api/chat.php?event_id=' + eventId)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.messages.length === 0) {
+                            chatMessages.innerHTML = '<p class="text-muted text-center">Aucun message pour le moment. Soyez le premier !</p>';
+                        } else {
+                            chatMessages.innerHTML = data.messages.map(m =>
+                                `<div class="mb-2"><strong>${escapeHtml(m.pseudo)}</strong> <small class="text-muted">${m.created_at}</small><br>${escapeHtml(m.message)}</div>`
+                            ).join('');
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }
+                    }
+                })
+                .catch(() => {
+                    chatMessages.innerHTML = '<p class="text-danger text-center">Erreur de chargement du chat.</p>';
+                });
+        }
+
+        loadChat();
+        setInterval(loadChat, 5000); // Rafraîchissement toutes les 5 secondes
+
+        chatForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const formData = new FormData();
+            formData.append('event_id', eventId);
+            formData.append('message', message);
+            formData.append('csrf_token', document.getElementById('chatCsrf').value);
+
+            fetch('api/chat.php', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        input.value = '';
+                        loadChat();
+                    } else {
+                        alert(data.error || 'Erreur lors de l\'envoi');
+                    }
+                })
+                .catch(() => alert('Erreur réseau'));
+        });
+    }
 });

@@ -146,7 +146,9 @@ if (isset($_GET['edit'])) {
                                         <small class="text-muted"><?= date('d/m/Y H:i', strtotime($evt['start_date'])) ?></small>
                                     </div>
                                     <div>
-                                        <?php if ($evt['status'] === 'valide' && !$evt['started'] && time() >= (strtotime($evt['start_date']) - 1800) && time() <= strtotime($evt['end_date'])): ?>
+                                        <?php if (strtotime($evt['end_date']) < time()): ?>
+                                            <span class="badge bg-secondary">Terminé</span>
+                                        <?php elseif ($evt['status'] === 'valide' && !$evt['started'] && time() >= (strtotime($evt['start_date']) - 1800) && time() <= strtotime($evt['end_date'])): ?>
                                             <a href="index.php?page=organizer&action=start&event_id=<?= (int)$evt['id'] ?>&csrf=<?= csrfToken() ?>" class="btn btn-sm btn-success">Démarrer</a>
                                         <?php elseif ($evt['started']): ?>
                                             <span class="badge bg-success">En cours</span>

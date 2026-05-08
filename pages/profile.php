@@ -118,7 +118,9 @@ $scores = $scoresStmt->fetchAll();
                                         <span class="badge bg-warning text-dark">En attente</span>
                                     <?php elseif ($reg['reg_status'] === 'accepte'): ?>
                                         <span class="badge bg-success">Accepté</span>
-                                        <?php if ($reg['started']): ?>
+                                        <?php if (strtotime($reg['end_date']) < time()): ?>
+                                            <span class="badge bg-secondary">Terminé</span>
+                                        <?php elseif ($reg['started']): ?>
                                             <a href="index.php?page=event_detail&id=<?= (int)$reg['id'] ?>" class="btn btn-sm btn-success mt-1">Rejoindre</a>
                                         <?php endif; ?>
                                     <?php endif; ?>
@@ -146,7 +148,9 @@ $scores = $scoresStmt->fetchAll();
                                 <div>
                                     <strong><?= e($fav['title']) ?></strong><br>
                                     <small class="text-muted"><?= date('d/m/Y H:i', strtotime($fav['start_date'])) ?></small>
-                                    <?php if ($fav['started']): ?>
+                                    <?php if (strtotime($fav['end_date']) < time()): ?>
+                                        <span class="badge bg-secondary">Terminé</span>
+                                    <?php elseif ($fav['started']): ?>
                                         <a href="index.php?page=event_detail&id=<?= (int)$fav['id'] ?>" class="btn btn-sm btn-success mt-1">Rejoindre</a>
                                     <?php endif; ?>
                                 </div>

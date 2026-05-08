@@ -20,6 +20,8 @@ if (!$event || !$event['visible'] || $event['status'] !== 'valide') {
 $acceptedCount = countAcceptedRegistrations($pdo, $eventId);
 $userRegistered = false;
 $userFavorite = false;
+$isFinished = strtotime($event['end_date']) < time();
+$isOngoing = $event['started'] && !$isFinished;
 
 if (isLoggedIn()) {
     $stmt = $pdo->prepare("SELECT status FROM event_registrations WHERE event_id = :eid AND user_id = :uid LIMIT 1");
@@ -42,6 +44,11 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
     <p><strong>📅 Fin :</strong> <?= date('d/m/Y H:i', strtotime($event['end_date'])) ?></p>
     <p><strong>👥 Participants :</strong> <?= (int)$acceptedCount ?> / <?= (int)$event['max_players'] ?></p>
     <p><strong>👤 Organisateur :</strong> <?= e($event['organizer_pseudo']) ?></p>
+    <?php if ($isFinished): ?>
+        <span class="badge bg-secondary">Terminé</span>
+    <?php elseif ($isOngoing): ?>
+        <span class="badge bg-success">En cours</span>
+    <?php endif; ?>
 
     <?php if (isLoggedIn() && in_array($_SESSION['user_role'] ?? '', ['joueur', 'organisateur', 'administrateur'])): ?>
         <div class="mt-3">
@@ -74,7 +81,18 @@ require_once __DIR__ . '/../includes/header.php';
     <div class="col-lg-8">
         <div class="card shadow">
             <div class="card-body">
-                <h1 class="card-title fw-bold"><?= e($event['title']) ?></h1>
+                <div class="d-flex justify-content-between align-items-start">
+                    <h1 class="card-title fw-bold"><?= e($event['title']) ?></h1>
+                    <div>
+                        <?php if ($isFinished): ?>
+                            <span class="badge bg-secondary fs-6">Terminé</span>
+                        <?php elseif ($isOngoing): ?>
+                            <span class="badge bg-success fs-6">En cours</span>
+                        <?php else: ?>
+                            <span class="badge bg-info fs-6">À venir</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
                 <p class="text-muted">Organisé par <?= e($event['organizer_pseudo']) ?></p>
                 <hr>
                 <p><?= nl2br(e($event['description'] ?: 'Aucune description.')) ?></p>
@@ -102,12 +120,41 @@ require_once __DIR__ . '/../includes/header.php';
                 <?php endif; ?>
             </div>
         </div>
+
+        <!-- Fil de discussion -->
+        <?php if ($userRegistered): ?>
+        <div class="card shadow mt-4" id="chatCard">
+            <div class="card-header bg-dark text-white fw-bold">
+                <i class="bi bi-chat-dots"></i> Fil de discussion
+            </div>
+            <div class="card-body">
+                <div id="chatMessages" class="mb-3" style="max-height: 300px; overflow-y: auto;">
+                    <p class="text-muted text-center">Chargement des messages...</p>
+                </div>
+                <form id="chatForm">
+                    <input type="hidden" id="chatEventId" value="<?= $eventId ?>">
+                    <input type="hidden" id="chatCsrf" value="<?= csrfToken() ?>">
+                    <div class="input-group">
+                        <input type="text" id="chatInput" class="form-control" placeholder="Votre message..." maxlength="2000" required>
+                        <button type="submit" class="btn btn-primary">Envoyer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <?php endif; ?>
     </div>
     <div class="col-lg-4">
         <div class="card shadow">
             <div class="card-body">
                 <h5 class="card-title">Informations</h5>
                 <p class="small text-muted">Les inscriptions sont conditionnées à la validation de l'organisateur ou à la jauge maximale.</p>
+                <?php if ($isFinished): ?>
+                    <div class="alert alert-secondary">Cet événement est terminé.</div>
+                <?php elseif ($isOngoing): ?>
+                    <div class="alert alert-success">Cet événement est en cours !</div>
+                <?php else: ?>
+                    <div class="alert alert-info">Cet événement n'a pas encore commencé.</div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
