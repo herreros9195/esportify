@@ -56,12 +56,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_event'])) {
     $endDate = $_POST['end_date'] ?? '';
     $imageUrl = trim($_POST['image_url'] ?? '');
 
-    $stmt = $pdo->prepare("UPDATE events SET title = :title, description = :desc, max_players = :max, start_date = :start, end_date = :end, image_url = :img, status = 'en_attente', visible = 0 WHERE id = :id AND organizer_id = :org");
-    $stmt->execute([
-        ':title' => $title, ':desc' => $description, ':max' => $maxPlayers,
-        ':start' => $startDate, ':end' => $endDate, ':img' => $imageUrl, ':id' => $eventId, ':org' => $organizerId
-    ]);
-    setFlash('Événement modifié et soumis à nouvelle validation.', 'success');
+    if (strtotime($endDate) <= strtotime($startDate)) {
+        setFlash('La date de fin doit être postérieure à la date de début.', 'danger');
+    } else {
+        $stmt = $pdo->prepare("UPDATE events SET title = :title, description = :desc, max_players = :max, start_date = :start, end_date = :end, image_url = :img, status = 'en_attente', visible = 0 WHERE id = :id AND organizer_id = :org");
+        $stmt->execute([
+            ':title' => $title, ':desc' => $description, ':max' => $maxPlayers,
+            ':start' => $startDate, ':end' => $endDate, ':img' => $imageUrl, ':id' => $eventId, ':org' => $organizerId
+        ]);
+        setFlash('Événement modifié et soumis à nouvelle validation.', 'success');
+    }
     redirect('index.php?page=organizer');
 }
 

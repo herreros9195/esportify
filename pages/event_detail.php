@@ -19,6 +19,7 @@ if (!$event || !$event['visible'] || $event['status'] !== 'valide') {
 
 $acceptedCount = countAcceptedRegistrations($pdo, $eventId);
 $userRegistered = false;
+$userRegistrationStatus = null;
 $userFavorite = false;
 $isFinished = strtotime($event['end_date']) < time();
 $isOngoing = $event['started'] && !$isFinished;
@@ -27,7 +28,10 @@ if (isLoggedIn()) {
     $stmt = $pdo->prepare("SELECT status FROM event_registrations WHERE event_id = :eid AND user_id = :uid LIMIT 1");
     $stmt->execute([':eid' => $eventId, ':uid' => $_SESSION['user_id']]);
     $reg = $stmt->fetch();
-    $userRegistered = ($reg && $reg['status'] === 'accepte');
+    if ($reg) {
+        $userRegistrationStatus = $reg['status'];
+        $userRegistered = ($reg['status'] === 'accepte');
+    }
 
     $stmt = $pdo->prepare("SELECT id FROM favorites WHERE user_id = :uid AND event_id = :eid LIMIT 1");
     $stmt->execute([':uid' => $_SESSION['user_id'], ':eid' => $eventId]);
@@ -52,11 +56,16 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQ
 
     <?php if (isLoggedIn() && in_array($_SESSION['user_role'] ?? '', ['joueur', 'organisateur', 'administrateur'])): ?>
         <div class="mt-3">
-            <?php if (!$userRegistered): ?>
+            <?php if ($userRegistrationStatus === null): ?>
                 <a href="index.php?page=profile&action=register&event_id=<?= $eventId ?>&csrf=<?= csrfToken() ?>" class="btn btn-success">S'inscrire</a>
-            <?php else: ?>
+            <?php elseif ($userRegistrationStatus === 'en_attente'): ?>
+                <span class="badge bg-warning text-dark">Inscription en attente</span>
+                <a href="index.php?page=profile&action=unregister&event_id=<?= $eventId ?>&csrf=<?= csrfToken() ?>" class="btn btn-outline-danger btn-sm">Se désinscrire</a>
+            <?php elseif ($userRegistrationStatus === 'accepte'): ?>
                 <span class="badge bg-success">Inscrit</span>
                 <a href="index.php?page=profile&action=unregister&event_id=<?= $eventId ?>&csrf=<?= csrfToken() ?>" class="btn btn-outline-danger btn-sm">Se désinscrire</a>
+            <?php elseif ($userRegistrationStatus === 'refuse'): ?>
+                <span class="badge bg-danger">Inscription refusée</span>
             <?php endif; ?>
 
             <?php if (!$userFavorite): ?>
@@ -106,11 +115,16 @@ require_once __DIR__ . '/../includes/header.php';
                 </ul>
                 <?php if (isLoggedIn() && in_array($_SESSION['user_role'] ?? '', ['joueur', 'organisateur', 'administrateur'])): ?>
                     <div class="mt-3">
-                        <?php if (!$userRegistered): ?>
+                        <?php if ($userRegistrationStatus === null): ?>
                             <a href="index.php?page=profile&action=register&event_id=<?= $eventId ?>&csrf=<?= csrfToken() ?>" class="btn btn-success">S'inscrire</a>
-                        <?php else: ?>
+                        <?php elseif ($userRegistrationStatus === 'en_attente'): ?>
+                            <span class="badge bg-warning text-dark">Inscription en attente</span>
+                            <a href="index.php?page=profile&action=unregister&event_id=<?= $eventId ?>&csrf=<?= csrfToken() ?>" class="btn btn-outline-danger btn-sm">Se désinscrire</a>
+                        <?php elseif ($userRegistrationStatus === 'accepte'): ?>
                             <span class="badge bg-success">Inscrit</span>
                             <a href="index.php?page=profile&action=unregister&event_id=<?= $eventId ?>&csrf=<?= csrfToken() ?>" class="btn btn-outline-danger btn-sm">Se désinscrire</a>
+                        <?php elseif ($userRegistrationStatus === 'refuse'): ?>
+                            <span class="badge bg-danger">Inscription refusée</span>
                         <?php endif; ?>
                         <?php if (!$userFavorite): ?>
                             <a href="index.php?page=profile&action=favorite&event_id=<?= $eventId ?>&csrf=<?= csrfToken() ?>" class="btn btn-outline-warning">⭐ Ajouter aux favoris</a>
