@@ -110,15 +110,15 @@ CREATE TABLE scores (
 -- ============================================================
 
 -- Mots de passe hashés (bcrypt) correspondant à "Password123!"
--- $2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi
+-- $2y$10$UGvKNwJAnl3.Bl2haE.xpuoEATkIPDUK3ByRcmCkm3B6vkqvocAZK
 
 INSERT INTO users (pseudo, email, password_hash, role) VALUES
-('admin_esportify', 'admin@esportify.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'administrateur'),
-('organisateur_1', 'org1@esportify.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'organisateur'),
-('organisateur_2', 'org2@esportify.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'organisateur'),
-('joueur_1', 'joueur1@esportify.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'joueur'),
-('joueur_2', 'joueur2@esportify.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'joueur'),
-('joueur_3', 'joueur3@esportify.fr', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'joueur');
+('admin_esportify', 'admin@esportify.fr', '$2y$10$UGvKNwJAnl3.Bl2haE.xpuoEATkIPDUK3ByRcmCkm3B6vkqvocAZK', 'administrateur'),
+('organisateur_1', 'org1@esportify.fr', '$2y$10$UGvKNwJAnl3.Bl2haE.xpuoEATkIPDUK3ByRcmCkm3B6vkqvocAZK', 'organisateur'),
+('organisateur_2', 'org2@esportify.fr', '$2y$10$UGvKNwJAnl3.Bl2haE.xpuoEATkIPDUK3ByRcmCkm3B6vkqvocAZK', 'organisateur'),
+('joueur_1', 'joueur1@esportify.fr', '$2y$10$UGvKNwJAnl3.Bl2haE.xpuoEATkIPDUK3ByRcmCkm3B6vkqvocAZK', 'joueur'),
+('joueur_2', 'joueur2@esportify.fr', '$2y$10$UGvKNwJAnl3.Bl2haE.xpuoEATkIPDUK3ByRcmCkm3B6vkqvocAZK', 'joueur'),
+('joueur_3', 'joueur3@esportify.fr', '$2y$10$UGvKNwJAnl3.Bl2haE.xpuoEATkIPDUK3ByRcmCkm3B6vkqvocAZK', 'joueur');
 
 INSERT INTO events (title, description, max_players, start_date, end_date, organizer_id, status, visible) VALUES
 ('Tournoi League of Legends Saison 1', 'Compétition 5v5 sur League of Legends avec phases éliminatoires.', 10, '2026-06-15 18:00:00', '2026-06-15 22:00:00', 2, 'valide', 1),
