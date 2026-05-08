@@ -42,8 +42,8 @@ if (isset($_GET['action']) && isset($_GET['id']) && isset($_GET['csrf'])) {
             break;
         case 'add_score':
             if (isset($_POST['user_id'], $_POST['event_id'], $_POST['score'])) {
-                $stmt = $pdo->prepare("INSERT INTO scores (user_id, event_id, score) VALUES (:uid, :eid, :score) ON DUPLICATE KEY UPDATE score = :score");
-                $stmt->execute([':uid' => (int)$_POST['user_id'], ':eid' => (int)$_POST['event_id'], ':score' => (int)$_POST['score']]);
+                $stmt = $pdo->prepare("INSERT INTO scores (user_id, event_id, score) VALUES (:uid, :eid, :score) ON DUPLICATE KEY UPDATE score = :score2");
+                $stmt->execute([':uid' => (int)$_POST['user_id'], ':eid' => (int)$_POST['event_id'], ':score' => (int)$_POST['score'], ':score2' => (int)$_POST['score']]);
                 setFlash('Score ajouté / mis à jour.', 'success');
             }
             break;
