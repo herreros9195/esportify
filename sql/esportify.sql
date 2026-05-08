@@ -36,6 +36,7 @@ CREATE TABLE events (
     start_date DATETIME NOT NULL,
     end_date DATETIME NOT NULL,
     organizer_id INT NOT NULL,
+    image_url VARCHAR(255) NULL,
     status ENUM('en_attente', 'valide', 'non_valide', 'suspendu') DEFAULT 'en_attente',
     visible TINYINT(1) DEFAULT 0,
     started TINYINT(1) DEFAULT 0,
@@ -134,13 +135,13 @@ INSERT INTO users (pseudo, email, password_hash, role) VALUES
 ('joueur_2', 'joueur2@esportify.fr', '$2y$10$UGvKNwJAnl3.Bl2haE.xpuoEATkIPDUK3ByRcmCkm3B6vkqvocAZK', 'joueur'),
 ('joueur_3', 'joueur3@esportify.fr', '$2y$10$UGvKNwJAnl3.Bl2haE.xpuoEATkIPDUK3ByRcmCkm3B6vkqvocAZK', 'joueur');
 
-INSERT INTO events (title, description, max_players, start_date, end_date, organizer_id, status, visible) VALUES
-('Tournoi League of Legends Saison 1', 'Compétition 5v5 sur League of Legends avec phases éliminatoires.', 10, '2026-06-15 18:00:00', '2026-06-15 22:00:00', 2, 'valide', 1),
-('Cup Fortnite Battle Royale', 'Tournoi solo de Fortnite. 100 joueurs, le dernier survivant remporte la mise !', 100, '2026-06-20 14:00:00', '2026-06-20 18:00:00', 2, 'valide', 1),
-('Championnat FIFA 26', 'Tournoi 1v1 sur FIFA 26. Console PS5 fournie sur place.', 32, '2026-07-05 19:00:00', '2026-07-05 23:00:00', 3, 'valide', 1),
-('Speedrun Mario Kart', 'Compétition de speedrun sur Mario Kart 8 Deluxe.', 16, '2026-06-10 20:00:00', '2026-06-10 22:00:00', 3, 'valide', 1),
-('Tournoi Valorant Esportify', 'Tournoi 5v5 sur Valorant. Cashprize pour l\'équipe gagnante.', 10, '2026-08-01 17:00:00', '2026-08-01 21:00:00', 2, 'en_attente', 0),
-('Event Rocket League', 'Tournoi 3v3 sur Rocket League.', 12, '2026-05-10 16:00:00', '2026-05-10 19:00:00', 3, 'valide', 1);
+INSERT INTO events (title, description, max_players, start_date, end_date, organizer_id, image_url, status, visible) VALUES
+('Tournoi League of Legends Saison 1', 'Compétition 5v5 sur League of Legends avec phases éliminatoires.', 10, '2026-06-15 18:00:00', '2026-06-15 22:00:00', 2, 'assets/images/event_lol.jpg', 'valide', 1),
+('Cup Fortnite Battle Royale', 'Tournoi solo de Fortnite. 100 joueurs, le dernier survivant remporte la mise !', 100, '2026-06-20 14:00:00', '2026-06-20 18:00:00', 2, 'assets/images/event_fortnite.jpg', 'valide', 1),
+('Championnat FIFA 26', 'Tournoi 1v1 sur FIFA 26. Console PS5 fournie sur place.', 32, '2026-07-05 19:00:00', '2026-07-05 23:00:00', 3, 'assets/images/event_fifa.jpg', 'valide', 1),
+('Speedrun Mario Kart', 'Compétition de speedrun sur Mario Kart 8 Deluxe.', 16, '2026-06-10 20:00:00', '2026-06-10 22:00:00', 3, 'assets/images/event_mariokart.jpg', 'valide', 1),
+('Tournoi Valorant Esportify', 'Tournoi 5v5 sur Valorant. Cashprize pour l\'équipe gagnante.', 10, '2026-08-01 17:00:00', '2026-08-01 21:00:00', 2, 'assets/images/event_valorant.jpg', 'en_attente', 0),
+('Event Rocket League', 'Tournoi 3v3 sur Rocket League.', 12, '2026-05-10 16:00:00', '2026-05-10 19:00:00', 3, 'assets/images/event_rocketleague.jpg', 'valide', 1);
 
 INSERT INTO event_registrations (event_id, user_id, status) VALUES
 (1, 4, 'accepte'),

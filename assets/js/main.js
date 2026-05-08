@@ -51,8 +51,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const col = document.createElement('div');
             col.className = 'col-md-4 event-card';
             col.setAttribute('data-id', evt.id);
+            const imgHtml = evt.image_url ? `<img src="${escapeHtml(evt.image_url)}" class="card-img-top" alt="${escapeHtml(evt.title)}" style="height: 160px; object-fit: cover;">` : '';
             col.innerHTML = `
                 <div class="card h-100 shadow-sm">
+                    ${imgHtml}
                     <div class="card-body">
                         <h5 class="card-title">${escapeHtml(evt.title)}</h5>
                         <p class="card-text text-muted small mb-1">

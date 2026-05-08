@@ -64,13 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_event'])) {
     $maxPlayers = (int)($_POST['max_players'] ?? 10);
     $startDate = $_POST['start_date'] ?? '';
     $endDate = $_POST['end_date'] ?? '';
+    $imageUrl = trim($_POST['image_url'] ?? '');
 
     if ($title && $startDate && $endDate) {
-        $stmt = $pdo->prepare("INSERT INTO events (title, description, max_players, start_date, end_date, organizer_id, status, visible) 
-                               VALUES (:title, :desc, :max, :start, :end, :org, 'en_attente', 0)");
+        $stmt = $pdo->prepare("INSERT INTO events (title, description, max_players, start_date, end_date, organizer_id, image_url, status, visible) 
+                               VALUES (:title, :desc, :max, :start, :end, :org, :img, 'en_attente', 0)");
         $stmt->execute([
             ':title' => $title, ':desc' => $description, ':max' => $maxPlayers,
-            ':start' => $startDate, ':end' => $endDate, ':org' => $userId
+            ':start' => $startDate, ':end' => $endDate, ':org' => $userId, ':img' => $imageUrl
         ]);
         setFlash('Événement créé et soumis à validation.', 'success');
     } else {
@@ -177,6 +178,11 @@ $scores = $scoresStmt->fetchAll();
                     <div class="mb-3">
                         <label class="form-label">Description</label>
                         <textarea name="description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Image de l'événement (URL)</label>
+                        <input type="url" name="image_url" class="form-control" placeholder="https://...">
+                        <div class="form-text">Lien vers une image libre de droit (Pexels, Unsplash, Pixabay...)</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Nombre de joueurs max *</label>

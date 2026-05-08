@@ -46,6 +46,9 @@ $events = getVisibleEvents($pdo);
     <?php foreach ($events as $event): ?>
         <div class="col-md-4 event-card" data-id="<?= (int)$event['id'] ?>">
             <div class="card h-100 shadow-sm">
+                <?php if (!empty($event['image_url'])): ?>
+                    <img src="<?= e($event['image_url']) ?>" class="card-img-top" alt="<?= e($event['title']) ?>" style="height: 160px; object-fit: cover;">
+                <?php endif; ?>
                 <div class="card-body">
                     <h5 class="card-title"><?= e($event['title']) ?></h5>
                     <p class="card-text text-muted small mb-1">

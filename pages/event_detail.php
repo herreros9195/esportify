@@ -80,6 +80,9 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="row">
     <div class="col-lg-8">
         <div class="card shadow">
+            <?php if (!empty($event['image_url'])): ?>
+                <img src="<?= e($event['image_url']) ?>" class="card-img-top" alt="<?= e($event['title']) ?>" style="max-height: 300px; object-fit: cover;">
+            <?php endif; ?>
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-start">
                     <h1 class="card-title fw-bold"><?= e($event['title']) ?></h1>

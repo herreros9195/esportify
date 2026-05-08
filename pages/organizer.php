@@ -54,11 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_event'])) {
     $maxPlayers = (int)($_POST['max_players'] ?? 10);
     $startDate = $_POST['start_date'] ?? '';
     $endDate = $_POST['end_date'] ?? '';
+    $imageUrl = trim($_POST['image_url'] ?? '');
 
-    $stmt = $pdo->prepare("UPDATE events SET title = :title, description = :desc, max_players = :max, start_date = :start, end_date = :end, status = 'en_attente', visible = 0 WHERE id = :id AND organizer_id = :org");
+    $stmt = $pdo->prepare("UPDATE events SET title = :title, description = :desc, max_players = :max, start_date = :start, end_date = :end, image_url = :img, status = 'en_attente', visible = 0 WHERE id = :id AND organizer_id = :org");
     $stmt->execute([
         ':title' => $title, ':desc' => $description, ':max' => $maxPlayers,
-        ':start' => $startDate, ':end' => $endDate, ':id' => $eventId, ':org' => $organizerId
+        ':start' => $startDate, ':end' => $endDate, ':img' => $imageUrl, ':id' => $eventId, ':org' => $organizerId
     ]);
     setFlash('Événement modifié et soumis à nouvelle validation.', 'success');
     redirect('index.php?page=organizer');
@@ -104,6 +105,10 @@ if (isset($_GET['edit'])) {
             <div class="mb-3">
                 <label class="form-label">Description</label>
                 <textarea name="description" class="form-control" rows="3"><?= e($editEvent['description']) ?></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Image de l'événement (URL)</label>
+                <input type="url" name="image_url" class="form-control" value="<?= e($editEvent['image_url'] ?? '') ?>" placeholder="https://...">
             </div>
             <div class="mb-3">
                 <label class="form-label">Nombre de joueurs max</label>
