@@ -39,10 +39,24 @@ if (isset($_GET['action']) && in_array($_GET['action'], ['accept', 'reject']) &&
         redirect('index.php?page=organizer');
     }
     $regId = (int)$_GET['reg_id'];
+    if ($regId <= 0) {
+        setFlash('Identifiant d\'inscription invalide.', 'danger');
+        redirect('index.php?page=organizer');
+    }
     $newStatus = $_GET['action'] === 'accept' ? 'accepte' : 'refuse';
-    $stmt = $pdo->prepare("UPDATE event_registrations SET status = :status WHERE id = :id AND event_id IN (SELECT id FROM events WHERE organizer_id = :org)");
-    $stmt->execute([':status' => $newStatus, ':id' => $regId, ':org' => $organizerId]);
-    setFlash('Inscription mise à jour.', 'success');
+    // L'administrateur peut gérer toutes les inscriptions, un organisateur seulement les siennes
+    if (isAdmin()) {
+        $stmt = $pdo->prepare("UPDATE event_registrations SET status = :status WHERE id = :id");
+        $stmt->execute([':status' => $newStatus, ':id' => $regId]);
+    } else {
+        $stmt = $pdo->prepare("UPDATE event_registrations SET status = :status WHERE id = :id AND event_id IN (SELECT id FROM events WHERE organizer_id = :org)");
+        $stmt->execute([':status' => $newStatus, ':id' => $regId, ':org' => $organizerId]);
+    }
+    if ($stmt->rowCount() > 0) {
+        setFlash('Inscription mise à jour.', 'success');
+    } else {
+        setFlash('Aucune inscription n\'a été mise à jour. Vérifiez vos droits.', 'warning');
+    }
     redirect('index.php?page=organizer');
 }
 
@@ -131,6 +145,16 @@ if (isset($_GET['edit'])) {
             <button type="submit" name="update_event" class="btn btn-success">Enregistrer les modifications</button>
             <a href="index.php?page=organizer" class="btn btn-secondary">Annuler</a>
         </form>
+        <script>
+            const editStart = document.querySelector('input[name="start_date"]');
+            const editEnd = document.querySelector('input[name="end_date"]');
+            if (editStart && editEnd) {
+                editEnd.min = editStart.value;
+                editStart.addEventListener('change', function() {
+                    editEnd.min = this.value;
+                });
+            }
+        </script>
     </div>
 </div>
 <?php endif; ?>

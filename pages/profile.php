@@ -169,11 +169,12 @@ $scores = $scoresStmt->fetchAll();
     </div>
 
     <!-- Créer un événement -->
+    <?php if (isOrganizerOrAbove()): ?>
     <div class="col-md-6">
         <div class="card shadow">
             <div class="card-header bg-info text-white fw-bold">Créer un événement</div>
             <div class="card-body">
-                <form method="POST" action="">
+                <form method="POST" action="" id="createEventForm">
                     <input type="hidden" name="csrf_token" value="<?= csrfToken() ?>">
                     <div class="mb-3">
                         <label class="form-label">Titre *</label>
@@ -204,9 +205,19 @@ $scores = $scoresStmt->fetchAll();
                     </div>
                     <button type="submit" name="create_event" class="btn btn-primary">Soumettre l'événement</button>
                 </form>
+                <script>
+                    const startInput = document.querySelector('#createEventForm input[name="start_date"]');
+                    const endInput = document.querySelector('#createEventForm input[name="end_date"]');
+                    if (startInput && endInput) {
+                        startInput.addEventListener('change', function() {
+                            endInput.min = this.value;
+                        });
+                    }
+                </script>
             </div>
         </div>
     </div>
+    <?php endif; ?>
 
     <!-- Mon historique d'événements -->
     <div class="col-md-6">
