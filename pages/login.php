@@ -1,6 +1,5 @@
 <?php
-$pageTitle = 'Connexion'; // Feature: Authentication
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 if (isLoggedIn()) {
     redirect('index.php?page=home');
@@ -30,6 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+$pageTitle = 'Connexion';
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="row justify-content-center">

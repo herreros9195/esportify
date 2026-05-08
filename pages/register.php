@@ -1,6 +1,5 @@
 <?php
-$pageTitle = 'Inscription';
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 if (isLoggedIn()) {
     redirect('index.php?page=home');
@@ -27,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
-        // Vérifier l'unicité
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email OR pseudo = :pseudo LIMIT 1");
         $stmt->execute([':email' => $email, ':pseudo' => $pseudo]);
         if ($stmt->fetch()) {
@@ -41,6 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+$pageTitle = 'Inscription';
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="row justify-content-center">

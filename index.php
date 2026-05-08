@@ -1,4 +1,5 @@
 <?php
+ob_start();
 /**
  * Routeur principal d'Esportify
  * Redirige vers les pages demandées via le paramètre ?page=
