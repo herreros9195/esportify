@@ -125,7 +125,7 @@ require_once __DIR__ . '/../includes/header.php';
         </div>
 
         <!-- Fil de discussion -->
-        <?php if ($userRegistered): ?>
+        <?php if ($userRegistered && $isOngoing): ?>
         <div class="card shadow mt-4" id="chatCard">
             <div class="card-header bg-dark text-white fw-bold">
                 <i class="bi bi-chat-dots"></i> Fil de discussion
