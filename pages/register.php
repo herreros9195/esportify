@@ -72,7 +72,7 @@ require_once __DIR__ . '/../includes/header.php';
                         <label for="password" class="form-label">Mot de passe</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="password" name="password" required minlength="8">
-                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password', this)">👁️</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password', this)"><i class="bi bi-eye"></i></button>
                         </div>
                         <div class="form-text">Minimum 8 caractères.</div>
                     </div>
@@ -80,7 +80,7 @@ require_once __DIR__ . '/../includes/header.php';
                         <label for="password_confirm" class="form-label">Confirmer le mot de passe</label>
                         <div class="input-group">
                             <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
-                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password_confirm', this)">👁️</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password_confirm', this)"><i class="bi bi-eye"></i></button>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Créer mon compte</button>
