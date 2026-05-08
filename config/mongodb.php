@@ -1,27 +1,24 @@
 <?php
 /**
- * Configuration MongoDB (NoSQL)
- * Pour MongoDB Atlas : remplacez MONGODB_URI par votre URI de connexion
- * Exemple : mongodb+srv://user:password@cluster.mongodb.net/esportify_nosql?retryWrites=true&w=majority
+ * Configuration MongoDB (NoSQL) - MongoDB Atlas
+ * Utilisé pour le fil de discussion asynchrone des événements.
+ * Utilise l'extension PHP mongodb native (pas besoin de Composer).
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
-
-use MongoDB\Client;
-
-// Mettez ici votre URI MongoDB Atlas (ou localhost:27017 pour local)
-define('MONGODB_URI', 'mongodb://localhost:27017');
+// URI MongoDB Atlas (Cloud)
+// Format : mongodb+srv://utilisateur:motdepasse@cluster.mongodb.net/?retryWrites=true&w=majority
+define('MONGODB_URI', 'mongodb+srv://esportify_user:BDgKmf5QK92GZJcH@cluster0.97j9zkv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0');
 define('MONGODB_DB', 'esportify_nosql');
 
 $mongoDB = null;
 
 try {
-    $mongoClient = new Client(MONGODB_URI);
-    // Test de connexion
-    $mongoClient->admin->command(['ping' => 1]);
-    $mongoDB = $mongoClient->selectDatabase(MONGODB_DB);
+    $mongoManager = new MongoDB\Driver\Manager(MONGODB_URI);
+    // Test de connexion avec une commande ping
+    $command = new MongoDB\Driver\Command(['ping' => 1]);
+    $mongoManager->executeCommand('admin', $command);
+    $mongoDB = $mongoManager;
 } catch (Exception $e) {
-    // MongoDB non disponible - le chat utilisera MySQL en fallback
     error_log("MongoDB non disponible : " . $e->getMessage());
     $mongoDB = null;
 }

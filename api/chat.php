@@ -1,7 +1,7 @@
 <?php
 /**
  * API asynchrone pour le fil de discussion (chat) d'un événement
- * Utilise MongoDB si disponible, sinon MySQL (fallback)
+ * Utilise MongoDB Atlas si disponible, sinon MySQL (fallback)
  * GET  : récupérer les messages d'un événement
  * POST : poster un nouveau message
  */
@@ -28,7 +28,8 @@ if (!$stmt->fetch()) {
 
 // ===== MODE MONGODB =====
 if ($mongoDB !== null) {
-    $collection = $mongoDB->selectCollection('chat_messages');
+    $bulk = new MongoDB\Driver\BulkWrite();
+    $query = new MongoDB\Driver\Query(['event_id' => $eventId], ['sort' => ['created_at' => 1], 'limit' => 100]);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $token = $_POST['csrf_token'] ?? '';
@@ -43,33 +44,30 @@ if ($mongoDB !== null) {
             exit;
         }
 
-        $collection->insertOne([
+        $bulk->insert([
             'event_id'   => $eventId,
             'user_id'    => $_SESSION['user_id'],
             'pseudo'     => $_SESSION['user_pseudo'],
             'message'    => $message,
             'created_at' => new MongoDB\BSON\UTCDateTime()
         ]);
+        $mongoDB->executeBulkWrite(MONGODB_DB . '.chat_messages', $bulk);
 
         echo json_encode(['success' => true, 'message' => 'Message envoyé']);
         exit;
     }
 
     // GET
-    $cursor = $collection->find(
-        ['event_id' => $eventId],
-        ['sort' => ['created_at' => 1], 'limit' => 100]
-    );
-
+    $cursor = $mongoDB->executeQuery(MONGODB_DB . '.chat_messages', $query);
     $output = [];
     foreach ($cursor as $msg) {
-        $date = $msg['created_at'] instanceof MongoDB\BSON\UTCDateTime
-            ? $msg['created_at']->toDateTime()->format('d/m/Y H:i')
-            : date('d/m/Y H:i', strtotime($msg['created_at']));
+        $date = $msg->created_at instanceof MongoDB\BSON\UTCDateTime
+            ? $msg->created_at->toDateTime()->format('d/m/Y H:i')
+            : date('d/m/Y H:i');
         $output[] = [
-            'id' => (string)$msg['_id'],
-            'pseudo' => e($msg['pseudo']),
-            'message' => e($msg['message']),
+            'id' => (string)$msg->_id,
+            'pseudo' => e($msg->pseudo),
+            'message' => e($msg->message),
             'created_at' => $date
         ];
     }
@@ -104,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// GET
+// GET MySQL
 $stmt = $pdo->prepare("SELECT id, pseudo, message, created_at FROM chat_messages WHERE event_id = :eid ORDER BY created_at ASC LIMIT 100");
 $stmt->execute([':eid' => $eventId]);
 $messages = $stmt->fetchAll();
