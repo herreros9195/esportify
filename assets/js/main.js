@@ -3,6 +3,17 @@
  * Filtres asynchrones, modal événement, et interactions UI.
  */
 
+function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     // Filtres asynchrones sur la page événements
     const filterForm = document.getElementById('filterForm');
