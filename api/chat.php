@@ -1,9 +1,7 @@
 <?php
 /**
- * API asynchrone pour le fil de discussion (chat) d'un événement
- * Utilise MongoDB Atlas si disponible, sinon MySQL (fallback)
- * GET  : récupérer les messages d'un événement
- * POST : poster un nouveau message
+ * API asynchrone pour le fil de discussion d'un evenement.
+ * Utilise MongoDB si disponible, sinon MySQL en fallback.
  */
 
 require_once __DIR__ . '/../includes/functions.php';
@@ -12,21 +10,36 @@ require_once __DIR__ . '/../config/mongodb.php';
 header('Content-Type: application/json; charset=utf-8');
 
 if (!isLoggedIn()) {
-    echo json_encode(['success' => false, 'error' => 'Non authentifié']);
+    echo json_encode(['success' => false, 'error' => 'Non authentifie']);
     exit;
 }
 
 $eventId = (int)($_GET['event_id'] ?? $_POST['event_id'] ?? 0);
+$event = getEventById($pdo, $eventId);
 
-// Vérifier que l'utilisateur est inscrit et accepté à l'événement
-$stmt = $pdo->prepare("SELECT id FROM event_registrations WHERE event_id = :eid AND user_id = :uid AND status = 'accepte' LIMIT 1");
-$stmt->execute([':eid' => $eventId, ':uid' => $_SESSION['user_id']]);
-if (!$stmt->fetch()) {
-    echo json_encode(['success' => false, 'error' => 'Vous devez être inscrit à cet événement pour participer au chat']);
+if (!$event || !$event['visible'] || $event['status'] !== 'valide') {
+    echo json_encode(['success' => false, 'error' => 'Evenement indisponible']);
     exit;
 }
 
-// ===== MODE MONGODB =====
+$registrationStmt = $pdo->prepare(
+    "SELECT id
+     FROM event_registrations
+     WHERE event_id = :event_id
+       AND user_id = :user_id
+       AND status = 'accepte'
+     LIMIT 1"
+);
+$registrationStmt->execute([
+    ':event_id' => $eventId,
+    ':user_id' => (int)$_SESSION['user_id'],
+]);
+
+if (!$registrationStmt->fetch() || !isEventJoinable($event, true)) {
+    echo json_encode(['success' => false, 'error' => 'Le chat est disponible uniquement pendant l\'evenement pour les joueurs acceptes.']);
+    exit;
+}
+
 if ($mongoDB !== null) {
     $bulk = new MongoDB\Driver\BulkWrite();
     $query = new MongoDB\Driver\Query(['event_id' => $eventId], ['sort' => ['created_at' => 1], 'limit' => 100]);
@@ -39,36 +52,35 @@ if ($mongoDB !== null) {
         }
 
         $message = trim($_POST['message'] ?? '');
-        if (empty($message) || strlen($message) > 2000) {
+        if ($message === '' || strlen($message) > 2000) {
             echo json_encode(['success' => false, 'error' => 'Message invalide']);
             exit;
         }
 
         $bulk->insert([
-            'event_id'   => $eventId,
-            'user_id'    => $_SESSION['user_id'],
-            'pseudo'     => $_SESSION['user_pseudo'],
-            'message'    => $message,
-            'created_at' => new MongoDB\BSON\UTCDateTime()
+            'event_id' => $eventId,
+            'user_id' => (int)$_SESSION['user_id'],
+            'pseudo' => $_SESSION['user_pseudo'],
+            'message' => $message,
+            'created_at' => new MongoDB\BSON\UTCDateTime(),
         ]);
         $mongoDB->executeBulkWrite(MONGODB_DB . '.chat_messages', $bulk);
 
-        echo json_encode(['success' => true, 'message' => 'Message envoyé']);
+        echo json_encode(['success' => true, 'message' => 'Message envoye']);
         exit;
     }
 
-    // GET
     $cursor = $mongoDB->executeQuery(MONGODB_DB . '.chat_messages', $query);
     $output = [];
-    foreach ($cursor as $msg) {
-        $date = $msg->created_at instanceof MongoDB\BSON\UTCDateTime
-            ? $msg->created_at->toDateTime()->format('d/m/Y H:i')
+    foreach ($cursor as $message) {
+        $date = $message->created_at instanceof MongoDB\BSON\UTCDateTime
+            ? $message->created_at->toDateTime()->format('d/m/Y H:i')
             : date('d/m/Y H:i');
         $output[] = [
-            'id' => (string)$msg->_id,
-            'pseudo' => e($msg->pseudo),
-            'message' => e($msg->message),
-            'created_at' => $date
+            'id' => (string)$message->_id,
+            'pseudo' => $message->pseudo,
+            'message' => $message->message,
+            'created_at' => $date,
         ];
     }
 
@@ -76,7 +88,6 @@ if ($mongoDB !== null) {
     exit;
 }
 
-// ===== MODE MYSQL (FALLBACK) =====
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = $_POST['csrf_token'] ?? '';
     if (!verifyCsrf($token)) {
@@ -85,35 +96,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $message = trim($_POST['message'] ?? '');
-    if (empty($message) || strlen($message) > 2000) {
+    if ($message === '' || strlen($message) > 2000) {
         echo json_encode(['success' => false, 'error' => 'Message invalide']);
         exit;
     }
 
-    $stmt = $pdo->prepare("INSERT INTO chat_messages (event_id, user_id, pseudo, message) VALUES (:eid, :uid, :pseudo, :msg)");
-    $stmt->execute([
-        ':eid' => $eventId,
-        ':uid' => $_SESSION['user_id'],
+    $insertStmt = $pdo->prepare(
+        "INSERT INTO chat_messages (event_id, user_id, pseudo, message)
+         VALUES (:event_id, :user_id, :pseudo, :message)"
+    );
+    $insertStmt->execute([
+        ':event_id' => $eventId,
+        ':user_id' => (int)$_SESSION['user_id'],
         ':pseudo' => $_SESSION['user_pseudo'],
-        ':msg' => $message
+        ':message' => $message,
     ]);
 
-    echo json_encode(['success' => true, 'message' => 'Message envoyé']);
+    echo json_encode(['success' => true, 'message' => 'Message envoye']);
     exit;
 }
 
-// GET MySQL
-$stmt = $pdo->prepare("SELECT id, pseudo, message, created_at FROM chat_messages WHERE event_id = :eid ORDER BY created_at ASC LIMIT 100");
-$stmt->execute([':eid' => $eventId]);
-$messages = $stmt->fetchAll();
+$messagesStmt = $pdo->prepare(
+    "SELECT id, pseudo, message, created_at
+     FROM chat_messages
+     WHERE event_id = :event_id
+     ORDER BY created_at ASC
+     LIMIT 100"
+);
+$messagesStmt->execute([':event_id' => $eventId]);
+$messages = $messagesStmt->fetchAll();
 
 $output = [];
-foreach ($messages as $msg) {
+foreach ($messages as $message) {
     $output[] = [
-        'id' => (int)$msg['id'],
-        'pseudo' => e($msg['pseudo']),
-        'message' => e($msg['message']),
-        'created_at' => date('d/m/Y H:i', strtotime($msg['created_at']))
+        'id' => (int)$message['id'],
+        'pseudo' => $message['pseudo'],
+        'message' => $message['message'],
+        'created_at' => date('d/m/Y H:i', strtotime($message['created_at'])),
     ];
 }
 

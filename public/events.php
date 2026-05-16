@@ -1,13 +1,12 @@
 <?php
-$pageTitle = 'Tous les événements'; // Feature: Events Management
+$pageTitle = 'Tous les evenements';
 require_once __DIR__ . '/../includes/header.php';
 
 $events = getVisibleEvents($pdo);
 ?>
 
-<h2 class="fw-bold mb-4">Tous les événements</h2>
+<h2 class="fw-bold mb-4">Tous les evenements</h2>
 
-<!-- Filtres -->
 <div class="card mb-4">
     <div class="card-body">
         <form id="filterForm" class="row g-3">
@@ -16,9 +15,9 @@ $events = getVisibleEvents($pdo);
                 <label for="sort" class="form-label">Trier par</label>
                 <select id="sort" name="sort" class="form-select">
                     <option value="date_asc">Date croissante</option>
-                    <option value="date_desc">Date décroissante</option>
+                    <option value="date_desc">Date decroissante</option>
                     <option value="players_asc">Joueurs (croissant)</option>
-                    <option value="players_desc">Joueurs (décroissant)</option>
+                    <option value="players_desc">Joueurs (decroissant)</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -30,34 +29,30 @@ $events = getVisibleEvents($pdo);
                 <input type="number" id="min_players" name="min_players" class="form-control" min="1">
             </div>
             <div class="col-md-3">
-                <label for="date_from" class="form-label">À partir du</label>
+                <label for="date_from" class="form-label">A partir du</label>
                 <input type="date" id="date_from" name="date_from" class="form-control">
             </div>
             <div class="col-12 text-end">
-                <button type="button" id="resetFilters" class="btn btn-outline-secondary">Réinitialiser</button>
+                <button type="button" id="resetFilters" class="btn btn-outline-secondary">Reinitialiser</button>
                 <button type="submit" class="btn btn-primary">Filtrer</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Liste des événements -->
 <div id="eventsContainer" class="row g-4">
     <?php foreach ($events as $event): ?>
         <div class="col-md-4 event-card" data-id="<?= (int)$event['id'] ?>">
             <div class="card h-100 shadow-sm">
-                <?php if (!empty($event['image_url'])): ?>
-                    <img src="<?= e($event['image_url']) ?>" class="card-img-top" alt="<?= e($event['title']) ?>" style="height: 160px; object-fit: cover;">
-                <?php endif; ?>
                 <div class="card-body">
                     <h5 class="card-title"><?= e($event['title']) ?></h5>
                     <p class="card-text text-muted small mb-1">
-                        👥 <?= (int)$event['max_players'] ?> joueurs max<br>
-                        📅 <?= date('d/m/Y H:i', strtotime($event['start_date'])) ?><br>
-                        👤 <?= e($event['organizer_pseudo']) ?>
+                        <?= (int)$event['max_players'] ?> joueurs max<br>
+                        Debut : <?= date('d/m/Y H:i', strtotime($event['start_date'])) ?><br>
+                        Fin : <?= date('d/m/Y H:i', strtotime($event['end_date'])) ?>
                     </p>
                     <button class="btn btn-outline-primary btn-sm mt-2 btn-details" data-id="<?= (int)$event['id'] ?>">
-                        Voir les détails
+                        Voir les details
                     </button>
                 </div>
             </div>
@@ -65,12 +60,11 @@ $events = getVisibleEvents($pdo);
     <?php endforeach; ?>
 </div>
 
-<!-- Modal détails événement -->
 <div class="modal fade" id="eventModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Détail de l'événement</h5>
+                <h5 class="modal-title" id="modalTitle">Detail de l'evenement</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="modalBody">

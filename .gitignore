@@ -1,23 +1,14 @@
-# Dépendances Composer
+# Dependances Composer
 /vendor/
 composer.lock
 
-# Fichiers d'environnement
-.env
-config/database_local.php
+logs/*
+!logs/.gitkeep
 
-# Sessions et logs
-*.log
-/sessions/
-
-# IDEs
-.vscode/
-.idea/
-
-# Système
+# Systeme
 .DS_Store
 Thumbs.db
 
-# Fichiers uploadés (à créer si upload implémenté)
+# Fichiers uploades (a creer si upload implemente)
 /assets/uploads/*
 !/assets/uploads/.gitkeep

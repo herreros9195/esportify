@@ -24,6 +24,7 @@ foreach ($events as $event) {
         'title'            => e($event['title']),
         'max_players'      => (int)$event['max_players'],
         'start_date'       => date('d/m/Y H:i', strtotime($event['start_date'])),
+        'end_date'         => date('d/m/Y H:i', strtotime($event['end_date'])),
         'organizer_pseudo' => e($event['organizer_pseudo']),
         'description'      => e($event['description'] ?? ''),
         'image_url'        => e($event['image_url'] ?? '')

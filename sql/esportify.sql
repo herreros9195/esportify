@@ -143,6 +143,14 @@ INSERT INTO events (title, description, max_players, start_date, end_date, organ
 ('Tournoi Valorant Esportify', 'Tournoi 5v5 sur Valorant. Cashprize pour l\'équipe gagnante.', 10, '2026-08-01 17:00:00', '2026-08-01 21:00:00', 2, 'assets/images/event_valorant.jpg', 'en_attente', 0),
 ('Event Rocket League', 'Tournoi 3v3 sur Rocket League.', 12, '2026-05-10 16:00:00', '2026-05-10 19:00:00', 3, 'assets/images/event_rocketleague.jpg', 'valide', 1);
 
+INSERT INTO event_images (event_id, image_path, is_main) VALUES
+(1, 'assets/images/event_lol.jpg', 1),
+(2, 'assets/images/event_fortnite.jpg', 1),
+(3, 'assets/images/event_fifa.jpg', 1),
+(4, 'assets/images/event_mariokart.jpg', 1),
+(5, 'assets/images/event_valorant.jpg', 1),
+(6, 'assets/images/event_rocketleague.jpg', 1);
+
 INSERT INTO event_registrations (event_id, user_id, status) VALUES
 (1, 4, 'accepte'),
 (1, 5, 'accepte'),

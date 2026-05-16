@@ -13,6 +13,7 @@ require_once __DIR__ . '/functions.php';
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+<a class="skip-link" href="#main-content">Aller au contenu</a>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
         <a class="navbar-brand fw-bold" href="index.php?page=home">
@@ -63,5 +64,5 @@ require_once __DIR__ . '/functions.php';
         </div>
     </div>
 </nav>
-<main class="container py-4">
+<main class="container py-4" id="main-content">
     <?= flashMessage() ?>

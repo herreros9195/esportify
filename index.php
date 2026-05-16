@@ -2,7 +2,7 @@
 ob_start();
 /**
  * Routeur principal d'Esportify
- * Redirige vers les pages demandées via le paramètre ?page=
+ * Redirige vers les vues publiques demandées via le paramètre ?page=
  */
 
 require_once __DIR__ . '/includes/functions.php';
@@ -17,7 +17,7 @@ if (!in_array($page, $allowedPages, true)) {
     $page = 'home';
 }
 
-$pageFile = __DIR__ . '/pages/' . $page . '.php';
+$pageFile = __DIR__ . '/public/' . $page . '.php';
 
 if (file_exists($pageFile)) {
     require_once $pageFile;

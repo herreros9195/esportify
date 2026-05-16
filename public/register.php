@@ -7,19 +7,22 @@ if (isLoggedIn()) {
 
 $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $pseudo = trim($_POST['pseudo'] ?? '');
-    $email = trim($_POST['email'] ?? '');
+    $pseudo = cleanInput($_POST['pseudo'] ?? '');
+    $email = cleanInput($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm = $_POST['password_confirm'] ?? '';
 
+    if (!verifyPostCsrf()) {
+        $errors[] = 'Jeton de securite invalide.';
+    }
     if (strlen($pseudo) < 3 || strlen($pseudo) > 50) {
-        $errors[] = 'Le pseudo doit contenir entre 3 et 50 caractères.';
+        $errors[] = 'Le pseudo doit contenir entre 3 et 50 caracteres.';
     }
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'L\'adresse email n\'est pas valide.';
     }
-    if (strlen($password) < 8) {
-        $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
+    if (!validateStrongPassword($password)) {
+        $errors[] = 'Le mot de passe doit contenir au moins 8 caracteres, une majuscule, une minuscule, un chiffre et un caractere special.';
     }
     if ($password !== $confirm) {
         $errors[] = 'Les mots de passe ne correspondent pas.';
@@ -29,12 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email OR pseudo = :pseudo LIMIT 1");
         $stmt->execute([':email' => $email, ':pseudo' => $pseudo]);
         if ($stmt->fetch()) {
-            $errors[] = 'Un compte existe déjà avec cet email ou ce pseudo.';
+            $errors[] = 'Un compte existe deja avec cet email ou ce pseudo.';
         } else {
             $hash = password_hash($password, PASSWORD_BCRYPT);
             $stmt = $pdo->prepare("INSERT INTO users (pseudo, email, password_hash, role) VALUES (:pseudo, :email, :hash, 'joueur')");
             $stmt->execute([':pseudo' => $pseudo, ':email' => $email, ':hash' => $hash]);
-            setFlash('Inscription réussie ! Vous pouvez maintenant vous connecter.', 'success');
+            setFlash('Inscription reussie ! Vous pouvez maintenant vous connecter.', 'success');
             redirect('index.php?page=login');
         }
     }
@@ -74,7 +77,7 @@ require_once __DIR__ . '/../includes/header.php';
                             <input type="password" class="form-control" id="password" name="password" required minlength="8">
                             <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password', this)"><i class="bi bi-eye"></i></button>
                         </div>
-                        <div class="form-text">Minimum 8 caractères.</div>
+                        <div class="form-text">Minimum 8 caracteres, avec majuscule, minuscule, chiffre et caractere special.</div>
                     </div>
                     <div class="mb-3">
                         <label for="password_confirm" class="form-label">Confirmer le mot de passe</label>
@@ -83,10 +86,10 @@ require_once __DIR__ . '/../includes/header.php';
                             <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password_confirm', this)"><i class="bi bi-eye"></i></button>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Créer mon compte</button>
+                    <button type="submit" class="btn btn-primary w-100">Creer mon compte</button>
                 </form>
                 <hr>
-                <p class="text-center mb-0">Déjà inscrit ? <a href="index.php?page=login">Se connecter</a></p>
+                <p class="text-center mb-0">Deja inscrit ? <a href="index.php?page=login">Se connecter</a></p>
             </div>
         </div>
     </div>

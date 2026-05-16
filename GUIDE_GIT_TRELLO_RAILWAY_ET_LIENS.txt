@@ -1,0 +1,54 @@
+GUIDE FINALISATION REMISE - Esportify
+
+1. GIT / GITHUB
+- La finalisation Git suit en general les etapes suivantes :
+  `git init`
+  `git add .`
+  `git commit -m "Version finale esportify"`
+- Un depot GitHub public peut ensuite etre cree avec le meme nom que le projet.
+- La liaison classique avec GitHub utilise :
+  `git remote add origin https://github.com/herreros9195/esportify.git`
+- La branche principale peut etre renommee si besoin :
+  `git branch -M main`
+- L'envoi initial suit ensuite :
+  `git push -u origin main`
+
+2. GESTION DE PROJET / TRELLO
+- Un board Trello public ou partageable permet de justifier l'organisation du projet.
+- Une structure simple reste suffisante :
+  `Backlog`, `A faire`, `En cours`, `Teste`, `Termine`
+- Les cartes utiles couvrent en general :
+  auth, base de donnees, accueil, vues, admin, docs, securite, deploiement
+- Les pieces justificatives les plus pertinentes sont :
+  dates, checklists, captures, liens GitHub et preuves d'avancement
+
+3. DEPLOIEMENT RAILWAY
+- Le guide detaille se trouve dans :
+  `docs/GUIDE_DEPLOIEMENT_RAILWAY.md`
+- La logique generale suit les etapes suivantes :
+  1. pousser le code sur GitHub ;
+  2. creer un projet Railway ;
+  3. connecter le depot GitHub ;
+  4. ajouter la base MySQL ;
+  5. verifier les variables d'environnement ;
+  6. importer `sql/esportify.sql` ;
+  7. lancer le deploiement ;
+  8. generer le domaine public.
+- Les variables importantes sont :
+  `DATABASE_URL`
+  `MONGODB_URI` si MongoDB est utilise
+  `MONGODB_DB`
+  `PHP_TIMEZONE=Europe/Paris` si necessaire
+- En local, la configuration Atlas peut passer par :
+  `config/mongodb.local.example.php`
+  duplique en `config/mongodb.local.php`
+- Ce fichier local reste ignore par Git et n'a pas vocation a apparaitre dans la copie a rendre.
+
+
+4. RAPPEL AVANT ENVOI
+- verifier l'accessibilite du depot GitHub ;
+- verifier l'ouverture du board Trello ;
+- verifier le fonctionnement de l'URL Railway ;
+- retester les parcours principaux ;
+- implementer la copie a rendre a partir du DOCX final .
+

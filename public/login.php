@@ -10,7 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if (empty($email) || empty($password)) {
+    if (!verifyPostCsrf()) {
+        $error = 'Jeton de securite invalide.';
+    } elseif (empty($email) || empty($password)) {
         $error = 'Veuillez remplir tous les champs.';
     } else {
         $stmt = $pdo->prepare("SELECT id, pseudo, email, password_hash, role FROM users WHERE email = :email AND is_active = 1 LIMIT 1");

@@ -1,28 +1,56 @@
 /**
- * Esportify - Charte graphique & Styles personnalisés
- * Palette : Bleu foncé (#0d6efd), Noir (#212529), Blanc (#ffffff), Gris clair (#f8f9fa)
+ * Esportify - Base graphique harmonisee
  */
 
 :root {
-    --esportify-primary: #0d6efd;
-    --esportify-dark: #212529;
-    --esportify-light: #f8f9fa;
-    --esportify-accent: #6610f2;
+    --app-bg: #f4f7fb;
+    --app-surface: #ffffff;
+    --app-text: #1f2937;
+    --app-muted: #64748b;
+    --app-primary: #0d6efd;
+    --app-primary-hover: #0b5ed7;
+    --app-dark: #111827;
+    --app-border: rgba(15, 23, 42, 0.08);
+    --app-focus: #005fcc;
 }
 
-html, body {
+html,
+body {
     height: 100%;
 }
 
 body {
     display: flex;
     flex-direction: column;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--esportify-light);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--app-text);
+    background:
+        radial-gradient(circle at top right, rgba(13, 110, 253, 0.08), transparent 24rem),
+        linear-gradient(180deg, #f8fbff 0%, var(--app-bg) 100%);
 }
 
 main {
     flex: 1;
+}
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    z-index: 1000;
+    padding: 0.75rem 1rem;
+    color: #fff;
+    background: #000;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+:focus-visible {
+    outline: 3px solid var(--app-focus);
+    outline-offset: 2px;
 }
 
 .navbar-brand {
@@ -31,22 +59,25 @@ main {
 }
 
 .card {
-    border: none;
-    border-radius: 0.5rem;
+    border: 1px solid var(--app-border);
+    border-radius: 0.85rem;
+    background: var(--app-surface);
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
 }
 
 .card-title {
-    color: var(--esportify-dark);
+    color: var(--app-text);
 }
 
 .btn-primary {
-    background-color: var(--esportify-primary);
-    border-color: var(--esportify-primary);
+    background-color: var(--app-primary);
+    border-color: var(--app-primary);
 }
 
-.btn-primary:hover {
-    background-color: #0b5ed7;
-    border-color: #0a58ca;
+.btn-primary:hover,
+.btn-primary:focus-visible {
+    background-color: var(--app-primary-hover);
+    border-color: var(--app-primary-hover);
 }
 
 .carousel-item .container {
@@ -56,36 +87,72 @@ main {
     align-items: center;
 }
 
-.event-card {
-    transition: transform 0.2s ease-in-out;
+.hero-slide {
+    min-height: 420px;
+    background-position: center;
+    background-size: cover;
+    color: #fff;
 }
 
-.event-card:hover {
+.hero-slide-fallback {
+    background:
+        linear-gradient(135deg, rgba(13, 110, 253, 0.95), rgba(17, 24, 39, 0.92));
+}
+
+.hero-slide-content {
+    min-height: 420px;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    text-align: left;
+}
+
+.hero-slide-copy {
+    max-width: 44rem;
+}
+
+.hero-slide-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+    opacity: 0.92;
+}
+
+.event-card,
+.card.shadow-sm {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.event-card:hover,
+.card.shadow-sm:hover {
     transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgba(15, 23, 42, 0.1) !important;
 }
 
 footer {
     margin-top: auto;
 }
 
-.alert {
-    border-radius: 0.5rem;
+.alert,
+.modal-content {
+    border-radius: 0.85rem;
 }
 
 .table th {
-    background-color: var(--esportify-dark);
     color: #fff;
+    background-color: var(--app-dark);
 }
 
-.modal-content {
-    border-radius: 0.5rem;
-}
-
-/* Responsive */
 @media (max-width: 767px) {
     .carousel-item .container {
         min-height: 200px;
     }
+
+    .hero-slide,
+    .hero-slide-content {
+        min-height: 340px;
+    }
+
     .display-4 {
         font-size: 2rem;
     }

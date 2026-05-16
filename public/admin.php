@@ -41,9 +41,25 @@ if (isset($_GET['action']) && isset($_GET['id']) && isset($_GET['csrf'])) {
             setFlash('Utilisateur désactivé.', 'info');
             break;
         case 'add_score':
-            if (isset($_POST['user_id'], $_POST['event_id'], $_POST['score'])) {
-                $stmt = $pdo->prepare("INSERT INTO scores (user_id, event_id, score) VALUES (:uid, :eid, :score) ON DUPLICATE KEY UPDATE score = :score2");
-                $stmt->execute([':uid' => (int)$_POST['user_id'], ':eid' => (int)$_POST['event_id'], ':score' => (int)$_POST['score'], ':score2' => (int)$_POST['score']]);
+            if (!verifyPostCsrf()) {
+                setFlash('Jeton de sécurité invalide.', 'danger');
+            } elseif (isset($_POST['user_id'], $_POST['event_id'], $_POST['score'])) {
+                $scoreData = [
+                    ':uid' => (int)$_POST['user_id'],
+                    ':eid' => (int)$_POST['event_id'],
+                    ':score' => (int)$_POST['score'],
+                ];
+                $checkStmt = $pdo->prepare("SELECT id FROM scores WHERE user_id = :uid AND event_id = :eid LIMIT 1");
+                $checkStmt->execute([':uid' => $scoreData[':uid'], ':eid' => $scoreData[':eid']]);
+                $existing = $checkStmt->fetch();
+
+                if ($existing) {
+                    $stmt = $pdo->prepare("UPDATE scores SET score = :score WHERE id = :id");
+                    $stmt->execute([':score' => $scoreData[':score'], ':id' => (int)$existing['id']]);
+                } else {
+                    $stmt = $pdo->prepare("INSERT INTO scores (user_id, event_id, score) VALUES (:uid, :eid, :score)");
+                    $stmt->execute($scoreData);
+                }
                 setFlash('Score ajouté / mis à jour.', 'success');
             }
             break;
