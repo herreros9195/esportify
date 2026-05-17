@@ -1,14 +1,28 @@
-# Dependances Composer
+# Dépendances Composer
 /vendor/
-composer.lock
 
-logs/*
-!logs/.gitkeep
+# Fichiers d'environnement
+.env
 
-# Systeme
+# Fichiers Trello / scripts locaux
+/tools/*
+
+# Sessions et logs
+*.log
+/logs/*
+!/logs/.gitkeep
+!/logs/mails/
+!/logs/mails/.gitkeep
+/sessions/
+
+# IDEs
+.vscode/
+.idea/
+
+# Système
 .DS_Store
 Thumbs.db
 
-# Fichiers uploades (a creer si upload implemente)
+# Fichiers uploadés
 /assets/uploads/*
 !/assets/uploads/.gitkeep

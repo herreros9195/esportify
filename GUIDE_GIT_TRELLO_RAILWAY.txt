@@ -1,5 +1,9 @@
 GUIDE FINALISATION REMISE - Esportify
 
+
+0. LIVRABLES
+- Maquettes , Documents PDF , Diagrammes -> dossier docs/
+
 1. GIT / GITHUB
 - La finalisation Git suit en general les etapes suivantes :
   `git init`
@@ -42,7 +46,6 @@ GUIDE FINALISATION REMISE - Esportify
 - En local, la configuration Atlas peut passer par :
   `config/mongodb.local.example.php`
   duplique en `config/mongodb.local.php`
-- Ce fichier local reste ignore par Git et n'a pas vocation a apparaitre dans la copie a rendre.
 
 
 4. RAPPEL AVANT ENVOI
