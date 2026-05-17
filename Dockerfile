@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     pkg-config \
     libssl-dev \
-    && pecl install mongodb \
+    && pecl install mongodb-1.20.1 \
     && docker-php-ext-enable mongodb \
     && docker-php-ext-install pdo pdo_mysql \
     && rm -rf /var/lib/apt/lists/*
