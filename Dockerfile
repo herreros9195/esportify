@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
@@ -10,11 +10,6 @@ RUN apt-get update && apt-get install -y \
     && pecl install mongodb-1.20.1 \
     && docker-php-ext-enable mongodb \
     && docker-php-ext-install pdo pdo_mysql \
-    && rm -f /etc/apache2/mods-enabled/mpm_event.load \
-    && rm -f /etc/apache2/mods-enabled/mpm_event.conf \
-    && rm -f /etc/apache2/mods-enabled/mpm_worker.load \
-    && rm -f /etc/apache2/mods-enabled/mpm_worker.conf \
-    && a2enmod mpm_prefork rewrite \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -24,6 +19,4 @@ COPY . /var/www/html
 
 RUN if [ -f composer.json ]; then composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader; fi
 
-CMD sed -i "s/Listen 80/Listen ${PORT:-8080}/" /etc/apache2/ports.conf && \
-    sed -i "s/:80/:${PORT:-8080}/" /etc/apache2/sites-available/000-default.conf && \
-    apache2-foreground
+CMD ["sh", "-c", "php -S 0.0.0.0:${PORT:-8080} -t /var/www/html /var/www/html/index.php"]
