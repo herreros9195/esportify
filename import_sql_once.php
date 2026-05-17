@@ -14,29 +14,58 @@ $sqlFile = __DIR__ . '/sql/esportify_railway.sql';
 
 if (!file_exists($sqlFile)) {
     http_response_code(500);
-    exit('Fichier SQL introuvable.');
+    exit('Fichier SQL introuvable : ' . htmlspecialchars($sqlFile));
 }
 
 try {
+    $sql = file_get_contents($sqlFile);
+
+    // Supprime le BOM UTF-8 éventuel
+    $sql = preg_replace('/^\xEF\xBB\xBF/', '', $sql);
+
+    // Normalise les retours ligne
+    $sql = str_replace(["\r\n", "\r"], "\n", $sql);
+
+    // Supprime les commentaires SQL et les lignes vides
+    $lines = explode("\n", $sql);
+    $cleanLines = [];
+
+    foreach ($lines as $line) {
+        $trimmed = trim($line);
+
+        if ($trimmed === '') {
+            continue;
+        }
+
+        if (str_starts_with($trimmed, '--')) {
+            continue;
+        }
+
+        if (stripos($trimmed, 'DROP DATABASE') === 0) {
+            continue;
+        }
+
+        if (stripos($trimmed, 'CREATE DATABASE') === 0) {
+            continue;
+        }
+
+        if (stripos($trimmed, 'USE esportify') === 0) {
+            continue;
+        }
+
+        $cleanLines[] = $line;
+    }
+
+    $sql = implode("\n", $cleanLines);
+
     $pdo->exec('SET FOREIGN_KEY_CHECKS=0');
     $pdo->exec('DROP TABLE IF EXISTS chat_messages, scores, favorites, event_registrations, event_images, events, users');
     $pdo->exec('SET FOREIGN_KEY_CHECKS=1');
 
-    $sql = file_get_contents($sqlFile);
-    $statements = array_filter(array_map('trim', explode(';', $sql)));
+    // Exécute tout le script d'un coup
+    $pdo->exec($sql);
 
-    $count = 0;
-
-    foreach ($statements as $statement) {
-        if ($statement === '') {
-            continue;
-        }
-
-        $pdo->exec($statement);
-        $count++;
-    }
-
-    echo "Import SQL terminé avec succès. Blocs exécutés : " . $count;
+    echo "Import SQL terminé avec succès.";
 } catch (Throwable $e) {
     http_response_code(500);
     echo "Erreur pendant l'import SQL : " . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8');
