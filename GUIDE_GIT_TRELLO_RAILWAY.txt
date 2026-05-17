@@ -23,8 +23,7 @@ GUIDE FINALISATION REMISE - Esportify
   `Backlog`, `A faire`, `En cours`, `Teste`, `Termine`
 - Les cartes utiles couvrent en general :
   auth, base de donnees, accueil, vues, admin, docs, securite, deploiement
-- Les pieces justificatives les plus pertinentes sont :
-  dates, checklists, captures, liens GitHub et preuves d'avancement
+- https://trello.com/b/CvBT9wAF/esportify-gestion-de-projet-ecf-studi
 
 3. DEPLOIEMENT RAILWAY
 - Le guide detaille se trouve dans :
