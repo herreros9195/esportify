@@ -5,9 +5,9 @@
 -- et insère des données de test.
 -- ============================================================
 
-DROP DATABASE IF EXISTS esportify;
-CREATE DATABASE esportify CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE esportify;
+-- DROP DATABASE IF EXISTS esportify;
+-- CREATE DATABASE esportify CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE esportify;
 
 -- ============================================================
 -- Table : users (utilisateurs)

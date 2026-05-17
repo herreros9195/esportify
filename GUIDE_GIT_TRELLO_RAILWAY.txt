@@ -45,7 +45,7 @@ GUIDE FINALISATION REMISE - Esportify
 - En local, la configuration Atlas peut passer par :
   `config/mongodb.local.example.php`
   duplique en `config/mongodb.local.php`
-
+- https://esportify-production-da89.up.railway.app/
 
 4. RAPPEL AVANT ENVOI
 - verifier l'accessibilite du depot GitHub ;
